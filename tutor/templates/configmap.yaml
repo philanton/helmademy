@@ -4,5 +4,14 @@ metadata:
   name: {{ .Release.Name }}-configmap
 data:
   text: "Hello World!"
-  drink: {{ .Values.favorite.drink | default "coffee" | quote }}
-  food: {{ .Values.favorite.food | upper | quote }}
+  {{- with .Values.favorite }}
+  drink: {{ .drink | default "None" | quote }}
+  food: {{ .food | upper | quote }}
+  {{- if eq .food "pizza" }}
+  toppings: |-
+    {{- range $.Values.pizzaToppings }}
+    - {{ . | title | quote }}
+    {{- end }}
+  {{- end }}
+  mug: {{ empty .drink | not | quote }}
+  {{- end }}
