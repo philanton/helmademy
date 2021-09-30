@@ -3,13 +3,15 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-configmap
 data:
-  text: "Hello World!"
+  text: {{ print (title .Chart.Name) "!" | cat "Hello" | quote }}
+  {{- $toppings := .Values.pizzaToppings }}
   {{- with .Values.favorite }}
-  drink: {{ .drink | default "None" | quote }}
-  food: {{ .food | upper | quote }}
+  {{- range $key, $val := . }}
+  {{ $key }}: {{ $val | default "none" | quote }}
+  {{- end }}
   {{- if eq .food "pizza" }}
   toppings: |-
-    {{- range $.Values.pizzaToppings }}
+    {{- range $toppings }}
     - {{ . | title | quote }}
     {{- end }}
   {{- end }}
