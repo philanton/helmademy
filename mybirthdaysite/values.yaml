@@ -1,0 +1,18 @@
+host: "www.mybirthdaysite.local"
+container:
+  image: "docker.io/philanton/mybirthdaysite:387f87e"
+  replicas: 1
+  port: 3000
+secret:
+  name: "priv-api-keys"
+  keys:
+    weatherApiKey: "weatherApiKey"
+configMap:
+  name: "pub-api-keys"
+  keys:
+    supabaseAnonKey: "supabaseAnonKey"
+    supabaseUrl: "supabaseUrl"
+apiKeys:
+  weatherApiKey: 
+  supabaseAnonKey: 
+  supabaseUrl: 

@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ lower .Release.Name }}
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  replicas: {{ .Values.container.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      containers:
+      - name: {{ lower .Release.Name }}
+        {{- with .Values.container }}
+        image: {{ .image }}
+        ports:
+        - containerPort: {{ .port }}
+          name: next
+        {{- end }}
+        env:
+        {{- with .Values.secret }}
+        - name: NEXT_PUBLIC_WEATHER_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ .name }}
+              key: {{ .keys.weatherApiKey }}
+        {{- end }}
+        {{- with .Values.configMap }}
+        - name: NEXT_PUBLIC_SUPABASE_ANON_KEY
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .name }}
+              key: {{ .keys.supabaseAnonKey }}
+        - name: NEXT_PUBLIC_SUPABASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .name }}
+              key: {{ .keys.supabaseUrl }}
+        {{- end }}
